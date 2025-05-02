@@ -15,15 +15,13 @@ export default function NavBar() {
   ];
 
   return (
-    <nav className="flex justify-center space-x-6 mt-8">
+    <nav className="flex justify-center space-x-6 mt-8 text-white">
       {navItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className={`text-sm uppercase tracking-wide px-4 py-2 rounded-md transition-colors ${
-            pathname === item.href 
-              ? 'bg-white text-black font-semibold' 
-              : 'bg-white/10 text-white hover:bg-white hover:text-black'
+          className={`text-sm uppercase tracking-wide hover:text-green-400 ${
+            pathname === item.href ? 'text-green-400 font-semibold' : ''
           }`}
         >
           {item.label}
