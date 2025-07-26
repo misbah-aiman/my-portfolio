@@ -27,6 +27,8 @@ export default function Home() {
       {/* Name & Title */}
       <h1 className="text-4xl font-bold">MISBAH AIMAN</h1>
       <p className="text-green-400 text-sm mt-2 uppercase">Programmer • Graphic Designer</p>
+      <div className="bg-red-500 text-white p-4">Tailwind Test</div>
+
     </div>
   );
 }

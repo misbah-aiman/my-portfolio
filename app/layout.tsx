@@ -1,23 +1,14 @@
-import './globals.css';
-import NavBar from './component/navbar';
-import type { Metadata } from 'next';
+import './globals.css'; // make sure this path is correct
 
-export const metadata: Metadata = {
-  title: 'Misbah Aiman Portfolio',
-  description: 'Personal portfolio of Misbah Aiman',
+export const metadata = {
+  title: 'Misbah Aiman',
+  description: 'Portfolio site',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white font-sans">
-        <NavBar />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
