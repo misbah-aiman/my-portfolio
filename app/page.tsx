@@ -1,34 +1,73 @@
-import Head from 'next/head';
-import Image from 'next/image';
+import { useEffect, useState } from 'react'
+// @ts-ignore
+import { supabase } from './supabase'
+import Navbar from './component/navbar'
 
-export default function Home() {
+type Project = {
+  id: string
+  title: string
+  description: string
+  image_url?: string
+  demo?: string
+  github?: string
+}
+
+export default function HomePage() {
+  const [projects, setProjects] = useState<Project[]>([])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) console.error(error)
+      else setProjects(data as Project[])
+    }
+    fetch()
+  }, [])
+
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center text-white text-center px-4">
-      <Head>
-        <title>Misbah Aiman</title>
-      </Head>
+    <div>
+      <Navbar />
+      <main className="p-6 max-w-5xl mx-auto space-y-8">
+        <section className="text-center">
+          <h1 className="text-4xl font-bold">My Portfolio</h1>
+          <p className="mt-2 text-gray-700">A showcase of my projects</p>
+        </section>
 
-      {/* Background Image */}
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src="/background.jpeg"
-          alt="Background"
-          layout="fill"
-          objectFit="cover"
-          className="blur-sm opacity-60"
-        />
-      </div>
-
-      {/* Profile Image */}
-      <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
-        <Image src="/profile.png" alt="Misbah Aiman" width={250} height={250} />
-      </div>
-
-      {/* Name & Title */}
-      <h1 className="text-4xl font-bold">MISBAH AIMAN</h1>
-      <p className="text-green-400 text-sm mt-2 uppercase">Programmer • Graphic Designer</p>
-      <div className="bg-red-500 text-white p-4">Tailwind Test</div>
-
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Projects</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {projects.map((proj) => (
+              <div key={proj.id} className="border rounded-lg p-4 hover:shadow-lg">
+                {proj.image_url && (
+                  <img
+                    src={proj.image_url}
+                    alt={proj.title}
+                    className="w-full h-48 object-cover rounded"
+                  />
+                )}
+                <h3 className="text-xl font-bold mt-2">{proj.title}</h3>
+                <p className="text-gray-600">{proj.description}</p>
+                <div className="mt-2 space-x-2">
+                  {proj.github && (
+                    <a href={proj.github} target="_blank" className="text-blue-600">
+                      GitHub
+                    </a>
+                  )}
+                  {proj.demo && (
+                    <a href={proj.demo} target="_blank" className="text-green-600">
+                      Demo
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+            {projects.length === 0 && <p>No projects found.</p>}
+          </div>
+        </section>
+      </main>
     </div>
-  );
+  )
 }

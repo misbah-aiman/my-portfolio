@@ -1,33 +1,47 @@
-'use client';
+'use client'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState, useEffect } from 'react'
+// @ts-ignore
+import { supabase } from '../supabase'
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+export default function Navbar() {
+  const path = usePathname()
+  const [session, setSession] = useState<any>(null)
 
-export default function NavBar() {
-  const pathname = usePathname();
-
-  const navItems = [
-    { label: 'Home', href: '/' },
-    { label: 'Work', href: '/work' },
-    { label: 'Resume', href: '/resume' },
-    { label: 'About', href: '/about' },
-    { label: 'Contact', href: '/contact' },
-  ];
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }: any) => {
+      setSession(data.session)
+    })
+    supabase.auth.onAuthStateChange((_event: any, value: any) => {
+      setSession(value.session)
+    })
+  }, [])
 
   return (
-    <nav className="flex justify-center gap-4 mt-8">
-      {navItems.map(({ label, href }) => (
-        <Link
-          key={href}
-          href={href}
-          className={`px-4 py-2 rounded-md text-sm font-semibold transition duration-200 border
-            ${pathname === href 
-              ? 'bg-green-400 text-black border-green-400' 
-              : 'text-white border-white hover:bg-green-400 hover:text-black'}`}
-        >
-          {label}
+    <nav className="bg-white shadow p-4 flex justify-between">
+      <div className="flex space-x-4">
+        <Link href="/">
+          <a className={path === '/' ? 'font-bold' : ''}>Home</a>
         </Link>
-      ))}
+        {session && (
+          <Link href="/admin">
+            <a className={path === '/admin' ? 'font-bold' : ''}>Admin</a>
+          </Link>
+        )}
+      </div>
+      <div>
+        {session ? (
+          <button
+            onClick={() => supabase.auth.signOut()}
+            className="text-red-600"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link href="/login"><a className="text-blue-600">Login</a></Link>
+        )}
+      </div>
     </nav>
-  );
+  )
 }
