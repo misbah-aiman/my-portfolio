@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["@supabase/auth-helpers-nextjs", "next"],
     "target": "ESNext",
     "lib": [
       "DOM",

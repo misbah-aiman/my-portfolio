@@ -1,22 +1,24 @@
 import './globals.css';
-import NavBar from './component/navbar';
-import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import SupabaseProvider from './component/SupabaseProvider';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 
-export const metadata: Metadata = {
-  title: 'Misbah Aiman Portfolio',
-  description: 'Personal portfolio of Misbah Aiman',
-};
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
   return (
     <html lang="en">
-      <body className="bg-black text-white font-sans">
-        <NavBar />
-        {children}
+      <body>
+        <SupabaseProvider session={session}>
+          {children}
+        </SupabaseProvider>
       </body>
     </html>
   );

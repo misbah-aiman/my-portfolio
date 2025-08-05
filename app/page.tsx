@@ -1,73 +1,138 @@
-import { useEffect, useState } from 'react'
-// @ts-ignore
-import { supabase } from './supabase'
-import Navbar from './component/navbar'
+'use client';
 
-type Project = {
-  id: string
-  title: string
-  description: string
-  image_url?: string
-  demo?: string
-  github?: string
-}
+import { useSupabase } from './component/SupabaseProvider';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function HomePage() {
-  const [projects, setProjects] = useState<Project[]>([])
+type MenuItem = {
+  name: string;
+  href: string;
+};
 
-  useEffect(() => {
-    const fetch = async () => {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false })
-      if (error) console.error(error)
-      else setProjects(data as Project[])
+export default function Home() {
+  const { supabase, session } = useSupabase();
+  const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const menuItems: MenuItem[] = [
+    { name: 'Admín', href: '/admin' },
+    { name: 'Percas', href: '/projects' },
+    { name: 'blog', href: '/blog' },
+    { name: 'Resume', href: '/resume' },
+    { name: 'Prople', href: '/people' },
+  ];
+
+  const handleAuth = async () => {
+    if (session) {
+      await supabase.auth.signOut();
+      router.refresh();
+    } else {
+      await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: { redirectTo: `${location.origin}/auth/callback` }
+      });
     }
-    fetch()
-  }, [])
+  };
 
   return (
-    <div>
-      <Navbar />
-      <main className="p-6 max-w-5xl mx-auto space-y-8">
-        <section className="text-center">
-          <h1 className="text-4xl font-bold">My Portfolio</h1>
-          <p className="mt-2 text-gray-700">A showcase of my projects</p>
-        </section>
+    <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
+      {/* Background Image */}
+      <div className="fixed inset-0 -z-10">
+        <Image
+          src="/background.jpeg"
+          alt="Background"
+          fill
+          className="blur-sm opacity-60 object-cover"
+          priority
+        />
+      </div>
 
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {projects.map((proj) => (
-              <div key={proj.id} className="border rounded-lg p-4 hover:shadow-lg">
-                {proj.image_url && (
-                  <img
-                    src={proj.image_url}
-                    alt={proj.title}
-                    className="w-full h-48 object-cover rounded"
-                  />
-                )}
-                <h3 className="text-xl font-bold mt-2">{proj.title}</h3>
-                <p className="text-gray-600">{proj.description}</p>
-                <div className="mt-2 space-x-2">
-                  {proj.github && (
-                    <a href={proj.github} target="_blank" className="text-blue-600">
-                      GitHub
-                    </a>
-                  )}
-                  {proj.demo && (
-                    <a href={proj.demo} target="_blank" className="text-green-600">
-                      Demo
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-            {projects.length === 0 && <p>No projects found.</p>}
-          </div>
-        </section>
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-700">
+        <div className="relative">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-700/50 transition-all"
+            aria-expanded={isMenuOpen}
+            aria-controls="dropdown-menu"
+          >
+            <span className="font-medium">Home</span>
+            <svg 
+              className={`w-4 h-4 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            >
+              <path stroke="currentColor" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {isMenuOpen && (
+            <div 
+              id="dropdown-menu"
+              className="absolute left-0 mt-2 w-56 bg-gray-800 rounded-lg shadow-xl border border-gray-700"
+            >
+              {menuItems.map((item) => (
+                <Link 
+                  key={item.href}
+                  href={item.href}
+                  className="block px-6 py-3 hover:bg-gray-700 border-b border-gray-700 last:border-b-0"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          onClick={handleAuth}
+          className="px-6 py-2 bg-primary hover:bg-primary-dark rounded-full transition-all shadow-md hover:shadow-lg"
+          aria-label={session ? 'Sign out' : 'Sign in'}
+        >
+          {session ? 'Sign Out' : 'Sign In'}
+        </button>
+      </nav>
+
+      {/* Main Content */}
+      <main className="flex flex-col items-center justify-center min-h-screen px-4 pt-24 pb-16">
+        <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-2xl mb-8 group hover:scale-105 transition-transform duration-300">
+          <Image
+            src="/profile.png"
+            alt="Misbah Aiman"
+            fill
+            className="object-cover group-hover:opacity-90 transition-opacity"
+            priority
+          />
+        </div>
+
+        <h1 className="text-4xl md:text-5xl font-bold mb-2 text-center bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-300">
+          MISBAH AIMAN
+        </h1>
+        <p className="text-lg md:text-xl text-green-400 uppercase tracking-[0.2em] mb-8">
+          PROGRAMMED • GRAPHIC LEXIQUE
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link 
+            href="/contact" 
+            className="px-8 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all font-medium"
+          >
+            Contact Me
+          </Link>
+          <Link 
+            href="/projects" 
+            className="px-8 py-3 bg-primary/90 hover:bg-primary rounded-full transition-all font-medium shadow-lg hover:shadow-primary/30"
+          >
+            View Projects
+          </Link>
+        </div>
       </main>
+
+      <footer className="fixed bottom-0 left-0 right-0 py-4 text-center text-sm text-gray-400 bg-gray-900/50 backdrop-blur-sm border-t border-gray-800">
+        © {new Date().getFullYear()} Misbah Aiman. All rights reserved
+      </footer>
     </div>
-  )
+  );
 }
