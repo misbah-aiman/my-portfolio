@@ -113,21 +113,6 @@ export default function Home() {
         <p className="text-lg md:text-xl text-green-400 uppercase tracking-[0.2em] mb-8">
           PROGRAMMED • GRAPHIC LEXIQUE
         </p>
-
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link 
-            href="/contact" 
-            className="px-8 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all font-medium"
-          >
-            Contact Me
-          </Link>
-          <Link 
-            href="/projects" 
-            className="px-8 py-3 bg-primary/90 hover:bg-primary rounded-full transition-all font-medium shadow-lg hover:shadow-primary/30"
-          >
-            View Projects
-          </Link>
-        </div>
       </main>
 
       <footer className="fixed bottom-0 left-0 right-0 py-4 text-center text-sm text-gray-400 bg-gray-900/50 backdrop-blur-sm border-t border-gray-800">

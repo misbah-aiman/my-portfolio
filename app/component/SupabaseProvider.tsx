@@ -22,7 +22,7 @@ export default function SupabaseProvider({
   const [supabase] = useState(() => createClientComponentClient());
   const router = useRouter();
 
-  useEffect(() => {
+  useEffect(() => { 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
