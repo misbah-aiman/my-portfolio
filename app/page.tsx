@@ -27,7 +27,7 @@ export default function Home() {
   const handleAuth = async () => {
     if (session) {
       await supabase.auth.signOut();
-      router.refresh();
+      router.refresh(); 
     } else {
       await supabase.auth.signInWithOAuth({
         provider: 'github',
@@ -38,7 +38,6 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white overflow-hidden">
-      {/* Background Image */}
       <div className="fixed inset-0 -z-10">
         <Image
           src="/background.jpeg"
@@ -49,7 +48,6 @@ export default function Home() {
         />
       </div>
 
-      {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-sm p-4 flex justify-between items-center border-b border-gray-700">
         <div className="relative">
           <button
@@ -95,7 +93,6 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* Main Content */}
       <main className="flex flex-col items-center justify-center min-h-screen px-4 pt-24 pb-16">
         <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white shadow-2xl mb-8 group hover:scale-105 transition-transform duration-300">
           <Image
